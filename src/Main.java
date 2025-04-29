@@ -12,18 +12,22 @@ public class Main {
         char[] field = new char[] {'_', '_', '_', '_', '_', '_', '_', '_', '_'};
         char[] playersMark = {'X', 'O'};
         int player = 1;
-        int[][] winnersVariant = {{0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}, {0,1,2},{3,4,5},{6,7,8}};
         drawField(field);
 
+        playGame(turnCounter, field, player, scanner, playersMark);
+
+    }
+
+    public static void playGame(int turnCounter, char[] field, int player, Scanner scanner, char[] playersMark) {
         while (turnCounter <= field.length) {
             System.out.println("Hraje hrac číslo: " + player + " (vol pole 1-9)");
             try {
                 int turn = scanner.nextInt();
-                if (turn >= 1 && turn <= 9) {
+                if (turn >= 1 && turn <= field.length) {
                     if (field[turn - 1] == '_') {
                         field[turn - 1] = playersMark[player - 1];
                         drawField(field);
-                        if (checkResult(field, winnersVariant, playersMark[player - 1])){
+                        if (checkResult(field, playersMark[player - 1])){
                             System.out.println("Vyhral hrac číslo:" + player + ". KONEC HRY!");
                             break;
                         }
@@ -49,12 +53,11 @@ public class Main {
                 System.out.println("Špatná volba, zkus znova!");
                 scanner.nextLine();
             }
-            if (turnCounter==9) {
+            if (turnCounter ==9) {
                 System.out.println("Nikdo nevyhral, konec hry.");
                 break;
             }
         }
-
     }
 
     public static void drawField(char[] field) {
@@ -67,18 +70,30 @@ public class Main {
         }
     }
 
-    public static boolean checkResult(char[] field, int[][] winn, char player) {
-    int checkWinner=0;
-        for (int k = 0; k <= 7; k++) {
-            for (int j = 0; j <= 2; j++) {
-                if (field[winn[k][j]] == player) {
-                    checkWinner++;
+    public static boolean checkResult(char[] field, char player) {
+        char[][] fieldToCheck=new char[3][3];
+        int d=0;
+        while (d<field.length) {
+            for (int k = 0; k <= 2; k++) {
+                for (int j = 0; j <= 2; j++) {
+                    fieldToCheck[k][j] = field[d];
+                    d++;
                 }
+
             }
-            if (checkWinner==3){
+        }
+        for (int k = 0; k < fieldToCheck.length; k++) {
+            if (fieldToCheck[k][0]==player && fieldToCheck[k][1]==player && fieldToCheck[k][2]==player){
                 return true;
-            }else {
-                checkWinner=0;
+            }
+            if (fieldToCheck[0][k]==player && fieldToCheck[1][k]==player && fieldToCheck[2][k]==player){
+                return true;
+            }
+            if (fieldToCheck[0][0]==player && fieldToCheck[1][1]==player && fieldToCheck[2][2]==player){
+                return true;
+            }
+            if (fieldToCheck[0][2]==player && fieldToCheck[1][1]==player && fieldToCheck[2][0]==player){
+                return true;
             }
         }
         return false;
